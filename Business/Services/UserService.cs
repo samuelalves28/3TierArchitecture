@@ -1,9 +1,10 @@
-﻿using Data.Implementations.Interfaces;
+﻿using Business.Interfaces;
+using Data.Implementations.Interfaces;
 using Data.Models;
 
 namespace Business.Services;
 
-public class UserService(IUserRepository userRepository)
+public class UserService(IUserRepository userRepository) : IUserService
 {
     public async Task<User> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {

@@ -8,44 +8,42 @@ namespace Data.Implementations.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly DataBaseContext _context;
-    private readonly DbSet<User> _users;
 
     public UserRepository(DataBaseContext context)
     {
         _context = context;
-        _users = _context.Set<User>();
     }
 
     public async Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _users.SingleAsync(s => s.Id == id, cancellationToken);
+        return await _context.User.SingleAsync(s => s.Id == id, cancellationToken);
     }
 
     public async Task<List<User>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _users.ToListAsync(cancellationToken);
+        return await _context.User.ToListAsync(cancellationToken);
     }
 
     public async Task<User> CreateAsync(User user, CancellationToken cancellationToken)
     {
-        await _users.AddAsync(user, cancellationToken);
+        await _context.User.AddAsync(user, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return user;
     }
 
     public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken)
     {
-        _users.Update(user);
+        _context.User.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
         return user;
     }
 
     public async Task<User?> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var user = await _users.SingleAsync(s => s.Id == id, cancellationToken);
+        var user = await _context.User.SingleAsync(s => s.Id == id, cancellationToken);
         if (user != null)
         {
-            _users.Remove(user);
+            _context.User.Remove(user);
             await _context.SaveChangesAsync(cancellationToken);
         }
         return user;

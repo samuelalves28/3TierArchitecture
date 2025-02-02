@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 
@@ -10,14 +11,12 @@ namespace Data.Context
         {
         }
 
-        public DbSet<T> GetDbSet<T>() where T : class => Set<T>();
+        public DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Este código obtém todas as classes de modelo criadas no namespace "API.Models" para que o Entity Framework possa mapeá-las corretamente durante as consultas.
-            // Isso evita colocar todas as classes de modelo no método "OnModelCreating" manualmente.
             var entityTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
                 .Where(t =>
