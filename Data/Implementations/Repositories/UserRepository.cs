@@ -1,47 +1,53 @@
 ﻿using Data.Context;
 using Data.Implementations.Interfaces;
 using Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Implementations.Repositories;
 
 public class UserRepository : IUserRepository
 {
     private readonly DataBaseContext _context;
+    private readonly DbSet<User> _users;
 
     public UserRepository(DataBaseContext context)
     {
         _context = context;
+        _users = _context.Set<User>();
     }
 
-    public async Task<User> GetUserByIdAsync(int id)
+    public async Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.FindAsync(id);
+        return await _users.SingleAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async Task<List<User>> GetAllAsync()
+    public async Task<List<User>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Users.ToListAsync();
+        return await _users.ToListAsync(cancellationToken);
     }
 
-    public async Task<User> AddAsync(User user)
+    public async Task<User> CreateAsync(User user, CancellationToken cancellationToken)
     {
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
+        await _users.AddAsync(user, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return user;
     }
 
-    public async Task<User> UpdateAsync(User user)
+    public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken)
     {
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
+        _users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
         return user;
     }
 
-    public async Task<User> DeleteAsync(int id)
+    public async Task<User?> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FindAsync(id);
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+        var user = await _users.SingleAsync(s => s.Id == id, cancellationToken);
+        if (user != null)
+        {
+            _users.Remove(user);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
         return user;
     }
 }

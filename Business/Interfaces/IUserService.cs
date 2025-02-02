@@ -1,8 +1,8 @@
 ﻿using Data.Models;
 
-namespace Data.Implementations.Interfaces;
+namespace Business.Interfaces;
 
-public interface IUserRepository
+public interface IUserService
 {
     Task<User> GetUserByIdAsync(int id, CancellationToken cancellationToken);
     Task<List<User>> GetAllAsync(CancellationToken cancellationToken);
